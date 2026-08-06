@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { pullToy } from "../pull";
+import { rarityClass } from "../rarity";
 
 const STAR_LABELS = {
   1: "★",
@@ -30,20 +31,25 @@ export default function PullPanel({ uid, onPulled }) {
   }
 
   return (
-    <div style={{ border: "1px solid #ccc", borderRadius: 8, padding: 16, marginTop: 16 }}>
-      <h3>Pull a toy</h3>
-      <button onClick={handlePull} disabled={pulling} style={{ padding: "8px 16px", fontSize: 16 }}>
+    <div className="panel pull-panel">
+      <h2>Pull a toy</h2>
+      <button className="pull-button" onClick={handlePull} disabled={pulling}>
         {pulling ? "Pulling..." : "Pull!"}
       </button>
 
-      {error && <p style={{ color: "red" }}>{error}</p>}
+      {error && <p className="pull-error">{error}</p>}
 
       {lastPull && (
-        <div style={{ marginTop: 12 }}>
-          <p>
-            You pulled a <strong>{lastPull.species}</strong> ({lastPull.rarity})
-          </p>
-          <p>{STAR_LABELS[lastPull.ownershipChain[0].starRating]}</p>
+        <div className="last-pull">
+          <span className="name">{lastPull.species}</span>
+          <span className={`tier-badge ${rarityClass(lastPull.rarity)}`}>{lastPull.rarity}</span>
+          <span
+            className={`star-rating ${
+              lastPull.ownershipChain[0].starRating === "platinum" ? "platinum" : ""
+            }`}
+          >
+            {STAR_LABELS[lastPull.ownershipChain[0].starRating]}
+          </span>
         </div>
       )}
     </div>

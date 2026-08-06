@@ -11,9 +11,9 @@ export default function NameEntry({ onSubmit }) {
   }
 
   return (
-    <div style={{ maxWidth: 320, margin: "80px auto", textAlign: "center" }}>
+    <div className="name-entry">
       <h2>Welcome to the trade sim</h2>
-      <p>Pick a name for this session:</p>
+      <p className="sub">Pick a name for this session:</p>
       <form onSubmit={handleSubmit}>
         <input
           type="text"
@@ -21,12 +21,8 @@ export default function NameEntry({ onSubmit }) {
           onChange={(e) => setName(e.target.value)}
           placeholder="Your name"
           autoFocus
-          style={{ padding: 8, fontSize: 16, width: "100%", boxSizing: "border-box" }}
         />
-        <button
-          type="submit"
-          style={{ marginTop: 12, padding: "8px 16px", fontSize: 16, width: "100%" }}
-        >
+        <button type="submit" className="pull-button">
           Start
         </button>
       </form>

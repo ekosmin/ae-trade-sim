@@ -1,6 +1,5 @@
 import { SPECIES } from "../gameData";
-
-const RARITY_ORDER = ["Common", "Rare", "Epic", "Legendary"];
+import { RARITY_ORDER, rarityClass } from "../rarity";
 
 export default function SpeciesProgress({ digitalCharacters }) {
   const countsBySpecies = {};
@@ -9,30 +8,30 @@ export default function SpeciesProgress({ digitalCharacters }) {
   }
 
   return (
-    <div style={{ marginTop: 24 }}>
-      <h3>Species progress</h3>
+    <div className="panel">
+      <h2>Species progress</h2>
+      <p className="panel-note">Digital characters collected, by species</p>
       {RARITY_ORDER.map((rarity) => {
         const speciesInRarity = SPECIES.filter((s) => s.rarity === rarity);
         const collected = speciesInRarity.filter((s) => countsBySpecies[s.name] > 0).length;
 
         return (
-          <div key={rarity} style={{ marginBottom: 16 }}>
-            <h4>
-              {rarity} ({collected} / {speciesInRarity.length} collected)
-            </h4>
-            <ul style={{ listStyle: "none", padding: 0 }}>
+          <div key={rarity} className="species-group">
+            <div className="species-group-head">
+              <span className={`tier-dot ${rarityClass(rarity)}`} />
+              <span>{rarity}</span>
+              <strong>
+                {collected} / {speciesInRarity.length}
+              </strong>
+            </div>
+            <ul className="item-list">
               {speciesInRarity.map((s) => (
                 <li
                   key={s.name}
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    padding: "4px 12px",
-                    opacity: countsBySpecies[s.name] ? 1 : 0.5,
-                  }}
+                  className={`species-row ${countsBySpecies[s.name] ? "" : "uncollected"}`}
                 >
-                  <span>{s.name}</span>
-                  <span>{countsBySpecies[s.name] || 0}</span>
+                  <span className="species-name">{s.name}</span>
+                  <span className="species-count">{countsBySpecies[s.name] || 0}</span>
                 </li>
               ))}
             </ul>
