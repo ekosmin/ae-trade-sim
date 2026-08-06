@@ -144,6 +144,18 @@
   font-size: 13px;
 }
 
+.pull-button.ghost {
+  background: transparent;
+  color: var(--ink);
+  border-color: var(--line);
+}
+
+.pull-button.ghost:hover:not(:disabled) {
+  background: transparent;
+  border-color: var(--indigo);
+  color: var(--indigo);
+}
+
 .pull-error {
   color: var(--rarity-legendary);
   margin-top: 12px;
@@ -274,6 +286,26 @@
 
 .item-row:last-child {
   border-bottom: none;
+}
+
+.item-row-clickable {
+  cursor: pointer;
+  border-radius: 6px;
+}
+
+.item-row-clickable:hover {
+  background: var(--paper);
+}
+
+.item-row.selected {
+  background: var(--rarity-rare-soft);
+}
+
+.item-note {
+  font-size: 11px;
+  font-family: "IBM Plex Mono", monospace;
+  color: var(--ink-soft);
+  white-space: nowrap;
 }
 
 .item-main {
@@ -409,6 +441,29 @@
 .room-member h3 {
   font-size: 14px;
   margin-bottom: 8px;
+}
+
+.trade-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.trade-columns {
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 24px;
+  align-items: start;
+  margin-top: 24px;
+}
+
+.trade-columns .panel + .panel {
+  margin-top: 0;
+}
+
+@media (max-width: 860px) {
+  .trade-columns {
+    grid-template-columns: 1fr;
+  }
 }
 
 /* Name entry */

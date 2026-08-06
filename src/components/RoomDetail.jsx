@@ -1,8 +1,13 @@
+import { useState } from "react";
 import { useRoom } from "../useRoom";
 import { usePlayersLive } from "../usePlayersLive";
 import { useToys } from "../useToys";
+import { useRoomTrades } from "../useRoomTrades";
 import { rarityClass } from "../rarity";
+import { hasEverOwned } from "../tradeback";
 import { leaveRoom } from "../rooms";
+import TradeRequestsPanel from "./TradeRequestsPanel";
+import TradeOfferPanel from "./TradeOfferPanel";
 
 export default function RoomDetail({ uid, roomId }) {
   const { room, loading } = useRoom(roomId);
@@ -10,6 +15,8 @@ export default function RoomDetail({ uid, roomId }) {
   const members = usePlayersLive(memberIds);
   const allToyIds = Array.from(new Set(memberIds.flatMap((id) => members[id]?.collection ?? [])));
   const { toys } = useToys(allToyIds);
+  const trades = useRoomTrades(roomId);
+  const [target, setTarget] = useState(null); // { toyId, ownerId } — the toy being requested
 
   if (loading || !room) {
     return (
@@ -19,7 +26,9 @@ export default function RoomDetail({ uid, roomId }) {
     );
   }
 
-  return (
+  const myToys = (members[uid]?.collection ?? []).map((id) => toys[id]).filter(Boolean);
+
+  const roomPanel = (
     <div className="panel">
       <div className="room-header">
         <h2>{room.name}</h2>
@@ -28,37 +37,81 @@ export default function RoomDetail({ uid, roomId }) {
         </button>
       </div>
       <p className="panel-note">
-        {memberIds.length} {memberIds.length === 1 ? "member" : "members"} in this room
+        {memberIds.length} {memberIds.length === 1 ? "member" : "members"} in this room — click a
+        toy to offer a trade for it.
       </p>
 
-      {memberIds.map((memberId) => {
-        const member = members[memberId];
-        const memberToys = (member?.collection ?? []).map((id) => toys[id]).filter(Boolean);
+      {memberIds
+        .filter((memberId) => memberId !== uid)
+        .map((memberId) => {
+          const member = members[memberId];
+          const memberToys = (member?.collection ?? []).map((id) => toys[id]).filter(Boolean);
 
-        return (
-          <div key={memberId} className="room-member">
-            <h3>
-              {member ? member.name : "..."}
-              {memberId === uid ? " (you)" : ""}
-            </h3>
-            {memberToys.length === 0 ? (
-              <p className="empty-note">No physical toys.</p>
-            ) : (
-              <ul className="item-list">
-                {memberToys.map((toy) => (
-                  <li key={toy.id} className="item-row">
-                    <span className={`tier-dot ${rarityClass(toy.rarity)}`} />
-                    <div className="item-main">
-                      <div className="item-name">{toy.species}</div>
-                    </div>
-                    <span className={`tier-badge ${rarityClass(toy.rarity)}`}>{toy.rarity}</span>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
-        );
-      })}
+          return (
+            <div key={memberId} className="room-member">
+              <h3>{member ? member.name : "..."}</h3>
+              {memberToys.length === 0 ? (
+                <p className="empty-note">No physical toys.</p>
+              ) : (
+                <ul className="item-list">
+                  {memberToys.map((toy) => {
+                    // Tradeback rule, requester side: can't request a toy you've owned before.
+                    const canRequest = !hasEverOwned(toy, uid);
+                    const isTargeted = target?.toyId === toy.id;
+
+                    return (
+                      <li
+                        key={toy.id}
+                        className={`item-row ${canRequest ? "item-row-clickable" : ""} ${
+                          isTargeted ? "selected" : ""
+                        }`}
+                        onClick={
+                          canRequest
+                            ? () =>
+                                setTarget(
+                                  isTargeted ? null : { toyId: toy.id, ownerId: memberId }
+                                )
+                            : undefined
+                        }
+                      >
+                        <span className={`tier-dot ${rarityClass(toy.rarity)}`} />
+                        <div className="item-main">
+                          <div className="item-name">{toy.species}</div>
+                        </div>
+                        <span className={`tier-badge ${rarityClass(toy.rarity)}`}>
+                          {toy.rarity}
+                        </span>
+                        {!canRequest && <span className="item-note">already owned</span>}
+                      </li>
+                    );
+                  })}
+                </ul>
+              )}
+            </div>
+          );
+        })}
     </div>
+  );
+
+  return (
+    <>
+      <TradeRequestsPanel roomId={roomId} uid={uid} trades={trades} toys={toys} members={members} />
+
+      {target ? (
+        <div className="trade-columns">
+          {roomPanel}
+          <TradeOfferPanel
+            roomId={roomId}
+            uid={uid}
+            target={target}
+            myToys={myToys}
+            onCancel={() => setTarget(null)}
+            onOffered={() => setTarget(null)}
+          />
+        </div>
+      ) : (
+        roomPanel
+      )}
+    </>
   );
 }
