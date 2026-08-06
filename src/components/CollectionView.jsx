@@ -1,5 +1,3 @@
-import { useToys } from "../useToys";
-
 const STAR_LABELS = {
   1: "★",
   2: "★★",
@@ -16,28 +14,8 @@ const cardStyle = {
   marginBottom: 8,
 };
 
-export default function CollectionView({ uid, player }) {
-  const allIds = Array.from(new Set([...player.collection, ...player.everOwned]));
-  const { toys, loading } = useToys(allIds);
-
-  if (loading) {
-    return <p>Loading collection...</p>;
-  }
-
+export default function CollectionView({ player, toys, digitalCharacters }) {
   const currentToys = player.collection.map((id) => toys[id]).filter(Boolean);
-
-  const digitalCharacters = player.everOwned
-    .map((id) => toys[id])
-    .filter(Boolean)
-    .map((toy) => {
-      const entry = toy.ownershipChain.find((e) => e.playerId === uid);
-      return {
-        toyId: toy.id,
-        species: toy.species,
-        rarity: toy.rarity,
-        starRating: entry?.starRating,
-      };
-    });
 
   return (
     <div style={{ marginTop: 24 }}>
