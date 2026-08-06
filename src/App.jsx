@@ -1,3 +1,4 @@
+import { useState } from "react";
 import "./App.css";
 import { usePlayer } from "./usePlayer";
 import { useToys } from "./useToys";
@@ -9,8 +10,14 @@ import DigitalCharactersPanel from "./components/DigitalCharactersPanel";
 import SpeciesProgress from "./components/SpeciesProgress";
 import TradeRoomsPanel from "./components/TradeRoomsPanel";
 
+const TABS = [
+  { id: "collection", label: "Collection" },
+  { id: "trade", label: "Trade Rooms" },
+];
+
 function App() {
   const { uid, player, loading, createPlayer } = usePlayer();
+  const [tab, setTab] = useState("collection");
   const allIds = player ? Array.from(new Set([...player.collection, ...player.everOwned])) : [];
   const { toys, loading: toysLoading } = useToys(allIds);
 
@@ -43,20 +50,36 @@ function App() {
         </div>
       </header>
 
-      <PullPanel uid={uid} />
+      <nav className="tab-bar">
+        {TABS.map((t) => (
+          <button
+            key={t.id}
+            className={`tab-button ${tab === t.id ? "active" : ""}`}
+            onClick={() => setTab(t.id)}
+          >
+            {t.label}
+          </button>
+        ))}
+      </nav>
 
-      <TradeRoomsPanel uid={uid} player={player} />
+      {tab === "collection" ? (
+        <>
+          <PullPanel uid={uid} />
 
-      {toysLoading ? (
-        <p className="empty-note" style={{ marginTop: 24 }}>
-          Loading collection...
-        </p>
+          {toysLoading ? (
+            <p className="empty-note" style={{ marginTop: 24 }}>
+              Loading collection...
+            </p>
+          ) : (
+            <div className="grid">
+              <SpeciesProgress digitalCharacters={digitalCharacters} />
+              <PhysicalToysPanel player={player} toys={toys} />
+              <DigitalCharactersPanel digitalCharacters={digitalCharacters} />
+            </div>
+          )}
+        </>
       ) : (
-        <div className="grid">
-          <SpeciesProgress digitalCharacters={digitalCharacters} />
-          <PhysicalToysPanel player={player} toys={toys} />
-          <DigitalCharactersPanel digitalCharacters={digitalCharacters} />
-        </div>
+        <TradeRoomsPanel uid={uid} player={player} />
       )}
     </div>
   );
