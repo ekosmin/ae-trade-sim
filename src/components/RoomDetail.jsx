@@ -103,6 +103,7 @@ export default function RoomDetail({ uid, roomId }) {
           <TradeOfferPanel
             roomId={roomId}
             uid={uid}
+            myPortals={members[uid]?.tradePortals}
             target={target}
             myToys={myToys}
             onCancel={() => setTarget(null)}

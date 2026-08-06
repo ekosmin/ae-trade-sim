@@ -1,4 +1,4 @@
-import { collection, doc, setDoc, updateDoc, arrayUnion } from "firebase/firestore";
+import { collection, doc, setDoc, updateDoc, arrayUnion, increment } from "firebase/firestore";
 import { db } from "./firebase";
 import { rollSpecies } from "./gameData";
 import { rollStarRating } from "./starRating";
@@ -27,6 +27,7 @@ export async function pullToy(uid) {
   await updateDoc(playerRef, {
     collection: arrayUnion(toyId),
     everOwned: arrayUnion(toyId),
+    tradePortals: increment(1),
   });
 
   return { toyId, ...toyData };

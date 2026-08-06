@@ -2,8 +2,9 @@ import { rarityClass } from "../rarity";
 import { hasEverOwned } from "../tradeback";
 import { requestTrade } from "../trades";
 
-export default function TradeOfferPanel({ roomId, uid, target, myToys, onCancel, onOffered }) {
+export default function TradeOfferPanel({ roomId, uid, myPortals, target, myToys, onCancel, onOffered }) {
   const offerable = myToys.filter((toy) => !hasEverOwned(toy, target.ownerId));
+  const hasPortal = (myPortals ?? 0) >= 1;
 
   async function handleOffer(toy) {
     await requestTrade(roomId, {
@@ -25,7 +26,11 @@ export default function TradeOfferPanel({ roomId, uid, target, myToys, onCancel,
       </div>
       <p className="panel-note">Pick one of your toys to offer in exchange.</p>
 
-      {offerable.length === 0 ? (
+      {!hasPortal ? (
+        <p className="empty-note">
+          You need a Trade Portal to offer a trade — pull a toy to earn one.
+        </p>
+      ) : offerable.length === 0 ? (
         <p className="empty-note">
           Nothing eligible to offer — they've owned all of your toys before.
         </p>

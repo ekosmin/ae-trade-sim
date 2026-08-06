@@ -11,6 +11,7 @@ const STAR_LABELS = {
 };
 
 export default function TradeRequestsPanel({ roomId, uid, trades, toys, members }) {
+  const hasPortal = (members[uid]?.tradePortals ?? 0) >= 1;
   const relevant = trades.filter((t) => {
     const isFrom = t.fromPlayer === uid;
     const isTo = t.toPlayer === uid;
@@ -86,7 +87,12 @@ export default function TradeRequestsPanel({ roomId, uid, trades, toys, members 
               </div>
               {isIncoming ? (
                 <div className="trade-actions">
-                  <button className="pull-button small" onClick={() => acceptTrade(roomId, trade)}>
+                  <button
+                    className="pull-button small"
+                    onClick={() => acceptTrade(roomId, trade)}
+                    disabled={!hasPortal}
+                    title={hasPortal ? undefined : "You need a Trade Portal to accept a trade"}
+                  >
                     Accept
                   </button>
                   <button

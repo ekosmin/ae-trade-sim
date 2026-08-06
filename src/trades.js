@@ -81,6 +81,12 @@ export async function acceptTrade(roomId, trade) {
       throw new Error("This trade is no longer valid — one of the toys has changed hands.");
     }
 
+    const fromPortals = fromPlayerSnap.data().tradePortals ?? 0;
+    const toPortals = toPlayerSnap.data().tradePortals ?? 0;
+    if (fromPortals < 1 || toPortals < 1) {
+      throw new Error("Both players need a Trade Portal to complete this trade.");
+    }
+
     // Tradeback rule, re-checked at accept time in case anything changed since request.
     const fromAlreadyOwnedRequested = requestedToy.ownershipChain.some(
       (e) => e.playerId === fromPlayer
@@ -110,9 +116,11 @@ export async function acceptTrade(roomId, trade) {
 
     transaction.update(fromPlayerRef, {
       collection: fromCollection.filter((id) => id !== offeredToyId).concat(requestedToyId),
+      tradePortals: fromPortals - 1,
     });
     transaction.update(toPlayerRef, {
       collection: toCollection.filter((id) => id !== requestedToyId).concat(offeredToyId),
+      tradePortals: toPortals - 1,
     });
 
     transaction.update(tradeRef, {

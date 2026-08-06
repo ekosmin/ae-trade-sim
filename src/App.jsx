@@ -42,10 +42,7 @@ function App() {
           </span>
           <span className="player-id">{player.id}</span>
           <span className="stat">
-            <strong>{player.collection.length}</strong> owned
-          </span>
-          <span className="stat">
-            <strong>{player.everOwned.length}</strong> ever owned
+            <strong>{player.tradePortals ?? 0}</strong> Trade Portals
           </span>
         </div>
       </header>
