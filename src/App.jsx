@@ -73,8 +73,8 @@ function App() {
           ) : (
             <div className="grid">
               <SpeciesProgress digitalCharacters={digitalCharacters} />
-              <PhysicalToysPanel player={player} toys={toys} />
-              <DigitalCharactersPanel digitalCharacters={digitalCharacters} />
+              <PhysicalToysPanel uid={uid} player={player} toys={toys} />
+              <DigitalCharactersPanel uid={uid} digitalCharacters={digitalCharacters} toys={toys} />
             </div>
           )}
         </>
