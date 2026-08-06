@@ -7,9 +7,10 @@ import PullPanel from "./components/PullPanel";
 import PhysicalToysPanel from "./components/PhysicalToysPanel";
 import DigitalCharactersPanel from "./components/DigitalCharactersPanel";
 import SpeciesProgress from "./components/SpeciesProgress";
+import TradeRoomsPanel from "./components/TradeRoomsPanel";
 
 function App() {
-  const { uid, player, loading, createPlayer, addOwnedToy } = usePlayer();
+  const { uid, player, loading, createPlayer } = usePlayer();
   const allIds = player ? Array.from(new Set([...player.collection, ...player.everOwned])) : [];
   const { toys, loading: toysLoading } = useToys(allIds);
 
@@ -42,7 +43,9 @@ function App() {
         </div>
       </header>
 
-      <PullPanel uid={uid} onPulled={(result) => addOwnedToy(result.toyId)} />
+      <PullPanel uid={uid} />
+
+      <TradeRoomsPanel uid={uid} player={player} />
 
       {toysLoading ? (
         <p className="empty-note" style={{ marginTop: 24 }}>
