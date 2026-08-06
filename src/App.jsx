@@ -35,7 +35,14 @@ function App() {
   }
 
   if (!player) {
-    return <NameEntry onSubmit={(name) => createPlayer(name, config.startingPortals)} />;
+    return (
+      <NameEntry
+        onSubmit={(name) => {
+          createPlayer(name, config.startingPortals);
+          setTab("collection");
+        }}
+      />
+    );
   }
 
   const digitalCharacters = getDigitalCharacters(player, uid, toys);
