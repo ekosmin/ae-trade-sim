@@ -518,6 +518,61 @@
   border-bottom: none;
 }
 
+/* Admin tab */
+
+.admin-warning {
+  background: var(--rarity-legendary-soft);
+  color: var(--rarity-legendary);
+  border: 1px solid var(--rarity-legendary);
+  border-radius: 8px;
+  padding: 12px 14px;
+  font-size: 13px;
+  font-weight: 500;
+  margin-bottom: 20px;
+}
+
+.admin-field {
+  margin-bottom: 24px;
+}
+
+.admin-field:last-child {
+  margin-bottom: 0;
+}
+
+.admin-field > label {
+  display: block;
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--ink-soft);
+  margin-bottom: 4px;
+}
+
+.admin-field > input {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 15px;
+  font-weight: 600;
+  padding: 8px 10px;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  background: #fff;
+  color: var(--ink);
+  width: 120px;
+}
+
+.weight-input {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 13px;
+  padding: 6px 8px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: #fff;
+  color: var(--ink);
+  width: 64px;
+  text-align: right;
+}
+
 /* Name entry */
 
 .name-entry {

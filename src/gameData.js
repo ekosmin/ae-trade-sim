@@ -24,13 +24,19 @@ export const SPECIES = [
     { name: "Hoodon", rarity: "Legendary", weight: 2 },
     { name: "Drazzle", rarity: "Legendary", weight: 2 },
   ];
-  
-  export function rollSpecies() {
-    const totalWeight = SPECIES.reduce((sum, s) => sum + s.weight, 0);
+
+  export function getDefaultSpeciesWeights() {
+    return Object.fromEntries(SPECIES.map((s) => [s.name, s.weight]));
+  }
+
+  export function rollSpecies(speciesWeights) {
+    const weights = speciesWeights ?? getDefaultSpeciesWeights();
+    const totalWeight = SPECIES.reduce((sum, s) => sum + (weights[s.name] ?? s.weight), 0);
     let roll = Math.random() * totalWeight;
     for (const s of SPECIES) {
-      if (roll < s.weight) return s;
-      roll -= s.weight;
+      const weight = weights[s.name] ?? s.weight;
+      if (roll < weight) return s;
+      roll -= weight;
     }
     return SPECIES[SPECIES.length - 1]; // fallback, shouldn't hit due to floating point
   }

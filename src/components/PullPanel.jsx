@@ -11,7 +11,7 @@ const STAR_LABELS = {
   platinum: "✦ PLATINUM ✦",
 };
 
-export default function PullPanel({ uid }) {
+export default function PullPanel({ uid, config }) {
   const [pulling, setPulling] = useState(false);
   const [lastPull, setLastPull] = useState(null);
   const [error, setError] = useState(null);
@@ -20,7 +20,7 @@ export default function PullPanel({ uid }) {
     setPulling(true);
     setError(null);
     try {
-      const result = await pullToy(uid);
+      const result = await pullToy(uid, config);
       setLastPull(result);
     } catch (err) {
       setError(err.message);

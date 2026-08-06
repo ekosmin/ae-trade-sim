@@ -2,6 +2,7 @@ import { useState } from "react";
 import "./App.css";
 import { usePlayer } from "./usePlayer";
 import { useToys } from "./useToys";
+import { useGameConfig } from "./config";
 import { getDigitalCharacters } from "./collectionUtils";
 import NameEntry from "./components/NameEntry";
 import PullPanel from "./components/PullPanel";
@@ -10,16 +11,21 @@ import DigitalCharactersPanel from "./components/DigitalCharactersPanel";
 import SpeciesProgress from "./components/SpeciesProgress";
 import TradeRoomsPanel from "./components/TradeRoomsPanel";
 import PlayerTab from "./components/PlayerTab";
+import AdminTab from "./components/AdminTab";
 
 const TABS = [
   { id: "collection", label: "Collection" },
   { id: "trade", label: "Trade Rooms" },
 ];
 
-const RIGHT_TABS = [{ id: "player", label: "Player" }];
+const RIGHT_TABS = [
+  { id: "admin", label: "Admin" },
+  { id: "player", label: "Player" },
+];
 
 function App() {
   const { uid, player, loading, createPlayer } = usePlayer();
+  const config = useGameConfig();
   const [tab, setTab] = useState("collection");
   const allIds = player ? Array.from(new Set([...player.collection, ...player.everOwned])) : [];
   const { toys, loading: toysLoading } = useToys(allIds);
@@ -29,7 +35,7 @@ function App() {
   }
 
   if (!player) {
-    return <NameEntry onSubmit={createPlayer} />;
+    return <NameEntry onSubmit={(name) => createPlayer(name, config.startingPortals)} />;
   }
 
   const digitalCharacters = getDigitalCharacters(player, uid, toys);
@@ -77,7 +83,7 @@ function App() {
 
       {tab === "collection" && (
         <>
-          <PullPanel uid={uid} />
+          <PullPanel uid={uid} config={config} />
 
           {toysLoading ? (
             <p className="empty-note" style={{ marginTop: 24 }}>
@@ -96,6 +102,8 @@ function App() {
       {tab === "trade" && <TradeRoomsPanel uid={uid} player={player} />}
 
       {tab === "player" && <PlayerTab uid={uid} player={player} />}
+
+      {tab === "admin" && <AdminTab config={config} />}
     </div>
   );
 }

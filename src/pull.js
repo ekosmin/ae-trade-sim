@@ -3,8 +3,8 @@ import { db } from "./firebase";
 import { rollSpecies } from "./gameData";
 import { rollStarRating } from "./starRating";
 
-export async function pullToy(uid) {
-  const species = rollSpecies();
+export async function pullToy(uid, config) {
+  const species = rollSpecies(config?.speciesWeights);
   const starRating = rollStarRating("pulled");
 
   const toyRef = doc(collection(db, "physicalToys"));
@@ -27,7 +27,7 @@ export async function pullToy(uid) {
   await updateDoc(playerRef, {
     collection: arrayUnion(toyId),
     everOwned: arrayUnion(toyId),
-    tradePortals: increment(1),
+    tradePortals: increment(config?.portalsPerHatch ?? 1),
   });
 
   return { toyId, ...toyData };

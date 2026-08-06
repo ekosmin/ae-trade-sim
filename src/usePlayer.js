@@ -38,14 +38,14 @@ export function usePlayer() {
   }, [uid]);
 
   // Step 3: called by the name-entry screen once the player picks a name
-  async function createPlayer(name) {
+  async function createPlayer(name, startingPortals = 5) {
     const playerRef = doc(db, "players", uid);
     await setDoc(playerRef, {
       name,
       collection: [], // array of physicalToy IDs currently owned
       everOwned: [], // array of physicalToy IDs ever owned (never shrinks)
       currentRoom: null,
-      tradePortals: 5,
+      tradePortals: startingPortals,
     });
     // the onSnapshot listener above will pick up the new doc.
   }
