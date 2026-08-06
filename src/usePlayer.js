@@ -47,8 +47,8 @@ export function usePlayer() {
     const playerRef = doc(db, "players", uid);
     const newPlayer = {
       name,
-      collection: {},
-      everOwned: [],
+      collection: [], // array of physicalToy IDs currently owned
+      everOwned: [], // array of physicalToy IDs ever owned (never shrinks)
       currentRoom: null,
     };
     await setDoc(playerRef, newPlayer);
