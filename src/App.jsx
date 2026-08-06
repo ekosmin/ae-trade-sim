@@ -9,11 +9,14 @@ import PhysicalToysPanel from "./components/PhysicalToysPanel";
 import DigitalCharactersPanel from "./components/DigitalCharactersPanel";
 import SpeciesProgress from "./components/SpeciesProgress";
 import TradeRoomsPanel from "./components/TradeRoomsPanel";
+import PlayerTab from "./components/PlayerTab";
 
 const TABS = [
   { id: "collection", label: "Collection" },
   { id: "trade", label: "Trade Rooms" },
 ];
+
+const RIGHT_TABS = [{ id: "player", label: "Player" }];
 
 function App() {
   const { uid, player, loading, createPlayer } = usePlayer();
@@ -48,18 +51,31 @@ function App() {
       </header>
 
       <nav className="tab-bar">
-        {TABS.map((t) => (
-          <button
-            key={t.id}
-            className={`tab-button ${tab === t.id ? "active" : ""}`}
-            onClick={() => setTab(t.id)}
-          >
-            {t.label}
-          </button>
-        ))}
+        <div className="tab-group">
+          {TABS.map((t) => (
+            <button
+              key={t.id}
+              className={`tab-button ${tab === t.id ? "active" : ""}`}
+              onClick={() => setTab(t.id)}
+            >
+              {t.label}
+            </button>
+          ))}
+        </div>
+        <div className="tab-group">
+          {RIGHT_TABS.map((t) => (
+            <button
+              key={t.id}
+              className={`tab-button ${tab === t.id ? "active" : ""}`}
+              onClick={() => setTab(t.id)}
+            >
+              {t.label}
+            </button>
+          ))}
+        </div>
       </nav>
 
-      {tab === "collection" ? (
+      {tab === "collection" && (
         <>
           <PullPanel uid={uid} />
 
@@ -75,9 +91,11 @@ function App() {
             </div>
           )}
         </>
-      ) : (
-        <TradeRoomsPanel uid={uid} player={player} />
       )}
+
+      {tab === "trade" && <TradeRoomsPanel uid={uid} player={player} />}
+
+      {tab === "player" && <PlayerTab uid={uid} player={player} />}
     </div>
   );
 }

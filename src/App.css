@@ -55,9 +55,14 @@
 
 .tab-bar {
   display: flex;
-  gap: 8px;
+  justify-content: space-between;
   margin-bottom: 24px;
   border-bottom: 1px solid var(--line);
+}
+
+.tab-group {
+  display: flex;
+  gap: 8px;
 }
 
 .tab-button {
@@ -488,6 +493,29 @@
   max-width: 480px;
   max-height: 80vh;
   overflow-y: auto;
+}
+
+/* Player tab */
+
+.player-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 8px;
+}
+
+.player-action-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--line);
+}
+
+.player-action-row:last-child {
+  padding-bottom: 0;
+  border-bottom: none;
 }
 
 /* Name entry */
