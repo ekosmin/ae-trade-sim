@@ -55,5 +55,15 @@ export function usePlayer() {
     setPlayer({ id: uid, ...newPlayer });
   }
 
-  return { uid, player, loading, createPlayer };
+  // Optimistic local update so the UI reflects a pull immediately, without
+  // waiting on a live listener (see known gaps re: no onSnapshot yet).
+  function addOwnedToy(toyId) {
+    setPlayer((prev) => ({
+      ...prev,
+      collection: [...prev.collection, toyId],
+      everOwned: [...prev.everOwned, toyId],
+    }));
+  }
+
+  return { uid, player, loading, createPlayer, addOwnedToy };
 }
