@@ -1,9 +1,23 @@
-import { respondToTrade } from "../trades";
+import { rarityClass } from "../rarity";
+import { acceptTrade, declineTrade, claimTrade } from "../trades";
+
+const STAR_LABELS = {
+  1: "★",
+  2: "★★",
+  3: "★★★",
+  4: "★★★★",
+  5: "★★★★★",
+  platinum: "✦ PLATINUM ✦",
+};
 
 export default function TradeRequestsPanel({ roomId, uid, trades, toys, members }) {
-  const relevant = trades.filter(
-    (t) => t.status === "pending" && (t.toPlayer === uid || t.fromPlayer === uid)
-  );
+  const relevant = trades.filter((t) => {
+    const isFrom = t.fromPlayer === uid;
+    const isTo = t.toPlayer === uid;
+    if (t.status === "pending") return isFrom || isTo;
+    if (t.status === "accepted") return (isFrom && !t.fromClaimed) || (isTo && !t.toClaimed);
+    return false;
+  });
 
   if (relevant.length === 0) {
     return null;
@@ -14,12 +28,41 @@ export default function TradeRequestsPanel({ roomId, uid, trades, toys, members 
       <h2>Trade requests</h2>
       <ul className="item-list">
         {relevant.map((trade) => {
-          const isIncoming = trade.toPlayer === uid;
-          const otherPlayer = members[isIncoming ? trade.fromPlayer : trade.toPlayer];
+          const isFrom = trade.fromPlayer === uid;
+          const otherPlayer = members[isFrom ? trade.toPlayer : trade.fromPlayer];
           const otherName = otherPlayer ? otherPlayer.name : "Someone";
           const offeredToy = toys[trade.offeredToyId];
           const requestedToy = toys[trade.requestedToyId];
           if (!offeredToy || !requestedToy) return null;
+
+          if (trade.status === "accepted") {
+            const newToyId = isFrom ? trade.requestedToyId : trade.offeredToyId;
+            const newToy = toys[newToyId];
+            if (!newToy) return null;
+            const myEntry = newToy.ownershipChain.find((e) => e.playerId === uid);
+
+            return (
+              <li key={trade.id} className="item-row">
+                <span className={`tier-dot ${rarityClass(newToy.rarity)}`} />
+                <div className="item-main">
+                  <div className="item-name">New ÆRTHLING: {newToy.species}</div>
+                  <div className="item-sub">
+                    From trading with {otherName} —{" "}
+                    <span
+                      className={`star-rating ${myEntry?.starRating === "platinum" ? "platinum" : ""}`}
+                    >
+                      {STAR_LABELS[myEntry?.starRating]}
+                    </span>
+                  </div>
+                </div>
+                <button className="pull-button small" onClick={() => claimTrade(roomId, trade, uid)}>
+                  Claim
+                </button>
+              </li>
+            );
+          }
+
+          const isIncoming = !isFrom;
 
           return (
             <li key={trade.id} className="item-row">
@@ -43,15 +86,12 @@ export default function TradeRequestsPanel({ roomId, uid, trades, toys, members 
               </div>
               {isIncoming ? (
                 <div className="trade-actions">
-                  <button
-                    className="pull-button small"
-                    onClick={() => respondToTrade(roomId, trade.id, true)}
-                  >
+                  <button className="pull-button small" onClick={() => acceptTrade(roomId, trade)}>
                     Accept
                   </button>
                   <button
                     className="pull-button small ghost"
-                    onClick={() => respondToTrade(roomId, trade.id, false)}
+                    onClick={() => declineTrade(roomId, trade.id)}
                   >
                     Reject
                   </button>
