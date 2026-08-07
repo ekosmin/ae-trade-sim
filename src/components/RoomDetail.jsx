@@ -5,7 +5,7 @@ import { useToys } from "../useToys";
 import { useRoomTrades } from "../useRoomTrades";
 import { rarityClass } from "../rarity";
 import { hasEverOwned } from "../tradeback";
-import { leaveRoom } from "../rooms";
+import { leaveRoom, closeRoom } from "../rooms";
 import TradeRequestsPanel from "./TradeRequestsPanel";
 import TradeOfferPanel from "./TradeOfferPanel";
 
@@ -28,13 +28,27 @@ export default function RoomDetail({ uid, roomId }) {
 
   const myToys = (members[uid]?.collection ?? []).map((id) => toys[id]).filter(Boolean);
 
+  function handleClose() {
+    const confirmed = window.confirm(
+      "Close this room? Everyone currently in it will be kicked out."
+    );
+    if (confirmed) {
+      closeRoom(roomId);
+    }
+  }
+
   const roomPanel = (
     <div className="panel">
       <div className="room-header">
         <h2>{room.name}</h2>
-        <button className="pull-button small" onClick={() => leaveRoom(uid, roomId)}>
-          Leave room
-        </button>
+        <div className="trade-actions">
+          <button className="pull-button small" onClick={() => leaveRoom(uid, roomId)}>
+            Leave room
+          </button>
+          <button className="pull-button small ghost" onClick={handleClose}>
+            Close room
+          </button>
+        </div>
       </div>
       <p className="panel-note">
         {memberIds.length} {memberIds.length === 1 ? "member" : "members"} in this room — click a

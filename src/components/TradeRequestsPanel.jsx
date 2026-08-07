@@ -1,5 +1,5 @@
 import { rarityClass } from "../rarity";
-import { acceptTrade, declineTrade, claimTrade } from "../trades";
+import { acceptTrade, declineTrade, acknowledgeTrade } from "../trades";
 
 const STAR_LABELS = {
   1: "★",
@@ -56,8 +56,11 @@ export default function TradeRequestsPanel({ roomId, uid, trades, toys, members 
                     </span>
                   </div>
                 </div>
-                <button className="pull-button small" onClick={() => claimTrade(roomId, trade, uid)}>
-                  Claim
+                <button
+                  className="pull-button small"
+                  onClick={() => acknowledgeTrade(roomId, trade, uid)}
+                >
+                  OK
                 </button>
               </li>
             );

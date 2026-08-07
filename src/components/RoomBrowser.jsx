@@ -3,7 +3,8 @@ import { useTradeRooms } from "../useTradeRooms";
 import { createRoom, joinRoom } from "../rooms";
 
 export default function RoomBrowser({ uid }) {
-  const { rooms, loading } = useTradeRooms();
+  const { rooms: allRooms, loading } = useTradeRooms();
+  const rooms = allRooms.filter((room) => !room.closed);
   const [name, setName] = useState("");
   const [busy, setBusy] = useState(false);
 

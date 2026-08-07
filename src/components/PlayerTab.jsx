@@ -9,7 +9,7 @@ export default function PlayerTab({ uid, player }) {
         "them from this new account."
     );
     if (confirmed) {
-      resetAccount();
+      resetAccount(uid, player.currentRoom);
     }
   }
 

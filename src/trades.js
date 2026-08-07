@@ -116,10 +116,12 @@ export async function acceptTrade(roomId, trade) {
 
     transaction.update(fromPlayerRef, {
       collection: fromCollection.filter((id) => id !== offeredToyId).concat(requestedToyId),
+      everOwned: arrayUnion(requestedToyId),
       tradePortals: fromPortals - 1,
     });
     transaction.update(toPlayerRef, {
       collection: toCollection.filter((id) => id !== requestedToyId).concat(offeredToyId),
+      everOwned: arrayUnion(offeredToyId),
       tradePortals: toPortals - 1,
     });
 
@@ -137,15 +139,12 @@ export async function acceptTrade(roomId, trade) {
   });
 }
 
-// Adds the newly-received toy to the player's everOwned list so their new
-// digital character shows up in their collection.
-export async function claimTrade(roomId, trade, uid) {
+// Dismisses the "you got a new ÆRTHLING" card for this side of the trade.
+// The digital character was already granted atomically in acceptTrade, so
+// this is purely acknowledging the notification — dismissing it (or never
+// seeing it, e.g. because the room closed) doesn't affect what you own.
+export async function acknowledgeTrade(roomId, trade, uid) {
   const isFrom = trade.fromPlayer === uid;
-  const newToyId = isFrom ? trade.requestedToyId : trade.offeredToyId;
-
-  await updateDoc(doc(db, "players", uid), {
-    everOwned: arrayUnion(newToyId),
-  });
   await updateDoc(doc(db, "tradeRooms", roomId, "trades", trade.id), {
     [isFrom ? "fromClaimed" : "toClaimed"]: true,
   });
