@@ -60,6 +60,9 @@ function App() {
           <span className="stat">
             <strong>{player.tradePortals ?? 0}</strong> Trade Portals
           </span>
+          <span className="stat plain">
+            $<strong>{player.spendTracker ?? 0}</strong> Spent
+          </span>
         </div>
       </header>
 

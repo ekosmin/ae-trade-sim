@@ -28,6 +28,7 @@ export async function pullToy(uid, config) {
     collection: arrayUnion(toyId),
     everOwned: arrayUnion(toyId),
     tradePortals: increment(config?.portalsPerHatch ?? 1),
+    spendTracker: increment(10),
   });
 
   return { toyId, ...toyData };

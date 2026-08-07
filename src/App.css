@@ -51,6 +51,12 @@
   font-weight: 600;
 }
 
+.stat.plain strong {
+  font-size: inherit;
+  font-weight: inherit;
+  color: inherit;
+}
+
 /* Tabs */
 
 .tab-bar {

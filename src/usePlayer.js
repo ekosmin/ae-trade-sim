@@ -46,6 +46,7 @@ export function usePlayer() {
       everOwned: [], // array of physicalToy IDs ever owned (never shrinks)
       currentRoom: null,
       tradePortals: startingPortals,
+      spendTracker: 0,
     });
     // the onSnapshot listener above will pick up the new doc.
   }
